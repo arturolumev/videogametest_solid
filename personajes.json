@@ -1,0 +1,42 @@
+[
+    {
+        "tipo": "guerrero",
+        "nombre": "Arthas",
+        "salud": 100,
+        "fuerza": 20,
+        "inteligencia": 5,
+        "espada": 15
+    },
+    {
+        "tipo": "guerrero",
+        "nombre": "Grommash",
+        "salud": 110,
+        "fuerza": 25,
+        "inteligencia": 3,
+        "espada": 18
+    },
+    {
+        "tipo": "mago",
+        "nombre": "Merlin",
+        "salud": 80,
+        "fuerza": 5,
+        "inteligencia": 25,
+        "libro": 20
+    },
+    {
+        "tipo": "heroe",
+        "nombre": "Leon",
+        "salud": 90,
+        "fuerza": 15,
+        "inteligencia": 10,
+        "espada": 15
+    },
+    {
+        "tipo": "mago",
+        "nombre": "Mago",
+        "salud": 90,
+        "fuerza": 15,
+        "inteligencia": 10,
+        "libro": 20
+    }
+]

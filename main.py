@@ -1,41 +1,59 @@
-from personajes.guerrero import Guerrero
-from personajes.mago import Mago
-from personajes.heroe import Heroe
 from villano import Villano
 from combate import simular_combate
+from personajes.registro import PersonajeRegistry
+from politicas.policy_registry import PolicyRegistry
 
-def main():
-    # guerrero = Guerrero(nombre="Arthas", salud=100, fuerza=20, inteligencia=5, espada=15)
-    # mago = Mago(nombre="Merlin", salud=80, fuerza=5, inteligencia=25, libro=20)
-    # villano = Villano()
-
-    # eleccion = input("Elige tu personaje (guerrero/mago): ").lower()
-    # if eleccion == "guerrero":
-    #     simular_combate(guerrero, villano)
-    # elif eleccion == "mago":
-    #     simular_combate(mago, villano)
-    # else:
-    #     print("Opción no válida.")
+def main():        
+    # Cargar todos los personajes dinámicamente
+    PersonajeRegistry.load_personajes()
     
-    personajes_disponibles = {
-        "guerrero": Guerrero(nombre="Arthas", salud=100, fuerza=20, inteligencia=5, espada=15),
-        "mago": Mago(nombre="Merlin", salud=80, fuerza=5, inteligencia=25, libro=20),
-        "heroe": Heroe(nombre="Leon", salud=90, fuerza=15, inteligencia=10, espada=15)
-    }
+    # Cargar todas las políticas dinámicamente
+    PolicyRegistry.load_policies()  
     
     villano = Villano()
     
-    personajes = ', '.join(list(personajes_disponibles.keys()))
+    PersonajeRegistry.cargar_personajes("personajes.json")
+            
+    print("Selecciona tu tipo de usuario: ")
+    politicas = PolicyRegistry.listar_politicas()
+    for politica in politicas:
+        print(f"- {politica}")
+        
+    rol = input("-> ").lower()
     
-    print("Personajes disponibles:", personajes)
+    politica = PolicyRegistry.get_policy(rol)
+    
+    if not politica:
+        print(f"No hay una política registrada para el rol '{rol}'.")
+        return
+    
+    politica = politica()  # Instanciar la política
+    
+    clases_disponibles = PersonajeRegistry.listar_clases()
+    clases_autorizadas = [clase for clase in clases_disponibles if politica.puede_acceder(clase)]
 
-    eleccion = input("Elige tu personaje: ").lower()
-    personaje = personajes_disponibles.get(eleccion)
+    print("Clases disponibles:", ", ".join(clases_autorizadas))
 
-    if personaje:
-        simular_combate(personaje, villano)
+    clase = input("Elige la clase de tu personaje: ").lower()
+    if not politica.puede_acceder(clase):
+        print(f"No tienes permisos para acceder a la clase {clase}.")
+        return
+
+    personajes = PersonajeRegistry.listar_personajes_por_clase(clase)
+    if personajes:
+        print("Personajes disponibles en la clase", clase + ":")
+        for personaje in personajes:
+            print(f"- {personaje.nombre}")
+
+        nombre_personaje = input("Elige el nombre de tu personaje: ").lower()
+        personaje_seleccionado = PersonajeRegistry.obtener_personaje(clase, nombre_personaje)
+
+        if personaje_seleccionado:
+            simular_combate(personaje_seleccionado, villano)
+        else:
+            print("Opción no válida.")
     else:
-        print("Opción no válida.")
+        print("No hay personajes en esta clase.")
 
 if __name__ == "__main__":
     main()
